@@ -1,5 +1,7 @@
 /target/
 .gradle/
+build/
+*/build/
 
 # Intellij ignores
 .idea/

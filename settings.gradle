@@ -3,3 +3,6 @@
  */
 
 rootProject.name = 'ProjectEdit'
+
+include 'api'
+include 'render'
