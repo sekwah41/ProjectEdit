@@ -1,6 +1,8 @@
 /target/
+.gradle/
 
 # Intellij ignores
+.idea/
 .idea
 *.iml
 
