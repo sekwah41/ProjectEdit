@@ -1,7 +1,6 @@
 /target/
 .gradle/
 build/
-build/
 out/
 
 # Intellij ignores
