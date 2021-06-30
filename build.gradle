@@ -23,13 +23,17 @@ configurations {
     implementation.extendsFrom(includeLibs)
 }
 
-
 dependencies {
     includeLibs project(':api')
     includeLibs project(':render')
 }
 
 jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.hardcoded.Main'
+        )
+    }
     // Filters the files out that are in the build folders. Look to see if there is a better way to do this?
     from configurations.includeLibs.filter {
         it.path.contains("\\build\\libs\\")

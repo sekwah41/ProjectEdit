@@ -1,5 +1,4 @@
 apply plugin: 'java'
-
 repositories {
     mavenLocal()
     maven {
@@ -7,29 +6,46 @@ repositories {
     }
 }
 
+configurations {
+    // configuration that holds jars to copy into lib
+    implementation.extendsFrom(includeLibs)
+}
+
 dependencies {
+    // Implementation doesnt include in the jar. So use where needed
     implementation project(':api')
-    implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
+    includeLibs 'org.apache.logging.log4j:log4j-api:2.14.1'
+    includeLibs 'org.apache.logging.log4j:log4j-core:2.14.1'
 
-    implementation 'org.joml:joml:1.9.24'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'org.json:json:20210307'
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.11.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0'
+    includeLibs 'org.joml:joml:1.9.24'
+    includeLibs 'org.apache.commons:commons-lang3:3.12.0'
+    includeLibs 'org.json:json:20210307'
+    includeLibs 'com.fasterxml.jackson.core:jackson-core:2.11.0'
+    includeLibs 'com.fasterxml.jackson.core:jackson-databind:2.11.0'
 
-    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+    includeLibs platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
-    implementation "org.lwjgl:lwjgl"
-    implementation "org.lwjgl:lwjgl-glfw"
-    implementation "org.lwjgl:lwjgl-opengl"
-    implementation "org.lwjgl:lwjgl-stb"
-    implementation "org.lwjgl:lwjgl-tinyfd"
-    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-tinyfd::$lwjglNatives"
+    // Implementation doesnt include
+    // To make a fat jar that will straight up run on windows this can be swapped from runtimeOnly to includeLibs
+    // Though the libs should probably be handled in a different way so it works across different platforms
+    includeLibs "org.lwjgl:lwjgl"
+    includeLibs "org.lwjgl:lwjgl-glfw"
+    includeLibs "org.lwjgl:lwjgl-opengl"
+    includeLibs "org.lwjgl:lwjgl-stb"
+    includeLibs "org.lwjgl:lwjgl-tinyfd"
+    includeLibs "org.lwjgl:lwjgl::$lwjglNatives"
+    includeLibs "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    includeLibs "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    includeLibs "org.lwjgl:lwjgl-stb::$lwjglNatives"
+    includeLibs "org.lwjgl:lwjgl-tinyfd::$lwjglNatives"
+}
+
+jar {
+    from configurations.includeLibs.collect {
+        println("Including: ${it.name}")
+        it.isDirectory() ? it : zipTree(it)
+    }
+    duplicatesStrategy = 'include'
 }
 
 tasks.withType(JavaCompile) {
